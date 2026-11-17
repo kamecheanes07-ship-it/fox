@@ -7,7 +7,10 @@
 #   * builds without package-lock.json if the Space upload missed it
 #   * keeps runtime data in /data (persistent storage) when it exists,
 #     otherwise /app/data, otherwise /tmp — see src/lib/data-dir.ts
-#   * a `public/` folder is kept in the repo (with .gitkeep) so COPY never fails
+#   * ONLY the Next.js files are copied into the build: a top-level `app/`
+#     folder (e.g. a Python package uploaded into the same Space) would
+#     otherwise shadow `src/app/` and produce a build that serves 404
+#     everywhere. `npm run postbuild` also fails the build in that case.
 
 FROM node:22-alpine AS base
 RUN apk add --no-cache libc6-compat wget
@@ -26,7 +29,15 @@ RUN if [ -f package-lock.json ]; then \
 # --------------------------------------------------------------------- builder
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+
+# Explicit list = the build context can contain anything else (Python app,
+# notebooks, other projects) without breaking or hijacking the Next.js build.
+COPY package.json ./
+COPY tsconfig.json next.config.ts postcss.config.mjs ./
+COPY src ./src
+COPY public ./public
+COPY scripts ./scripts
+
 ENV NEXT_TELEMETRY_DISABLED=1 \
     NODE_ENV=production
 RUN npm run build
@@ -46,9 +57,9 @@ RUN mkdir -p /app/data /data \
 
 COPY --from=deps --chown=1000:1000 /app/node_modules ./node_modules
 COPY --from=builder --chown=1000:1000 /app/.next ./.next
+COPY --from=builder --chown=1000:1000 /app/public ./public
 COPY --from=builder --chown=1000:1000 /app/package.json ./package.json
 COPY --from=builder --chown=1000:1000 /app/next.config.ts ./next.config.ts
-COPY --from=builder --chown=1000:1000 /app/public ./public
 
 USER 1000
 

@@ -37,6 +37,26 @@ pinned: false
 | لا قاعدة بيانات | طبقة تخزين مزدوجة: PostgreSQL عند وجود `DATABASE_URL`، وإلا مخزن JSON محلي. |
 | فحص الصحة | `GET /api/health` يعيد `{"ok":true,...}` ويستخدمه `HEALTHCHECK`. |
 
+### إن ظهرت صفحة 404 على كل المسارات
+
+Next.js يختار مجلد App Router كأول مجلد موجود من: `app/` ثم `src/app/`. إذا رفعت إلى نفس الـ Space مشروعاً آخر
+فيه مجلد `app/` في الجذر (مثل تطبيق FastAPI/بايثون: `app/main.py`)، فسيُختار **هذا** المجلد، والبناء ينجح لكن كل
+الصفحات ترجع `404: This page could not be found.` — بينما الملفات الثابتة (`/favicon.ico`, `/manifest.webmanifest`)
+تعمل، وهذا هو التوقيع المميّز للمشكلة.
+
+الإصلاح (أحد الخيارين):
+
+1. **الأفضل**: أبقِ الـ Space لمشروع Fox فقط. انقل مشروع بايثون إلى Space آخر (أو إلى فرع/مجلد منفصل)، لأن
+   `README.md` (بطاقة الـ Space) و`Dockerfile` كلاهما لـ Fox.
+2. إن كان لا بد من وجودهما معاً: أعد تسمية مجلد بايثون من `app/` إلى `pyapp/` وحدّث الاستيرادات (`from pyapp.main import ...`)
+   و`entrypoint.sh`.
+
+هذا المشروع محمي الآن تلقائياً من هذه الحالة:
+- `Dockerfile` ينسخ فقط ملفات Next (`src/`, `public/`, `scripts/`, الإعدادات) ولا ينسخ أي مجلد `app/` في الجذر.
+- `.dockerignore` يستثني `/app` و`*.py` و`requirements*.txt` و`entrypoint.sh`.
+- `npm run build` يشغّل `scripts/verify-build.mjs` بعده، وإذا لم تُبنَ الصفحة الرئيسية أو كانت هناك `app/` في الجذر
+  يفشل البناء برسالة صريحة تسمّي المجلد المتسبب — بدلاً من نشر موقع كله 404.
+
 ### البيانات الدائمة (مهم)
 
 بدون تفعيل **Persistent Storage** في إعدادات الـ Space (Settings → Persistent storage → `Small` أو أكبر)، تُحذف المحفوظات وسجل البحث عند كل إعادة تشغيل (الـ Space container مؤقت).

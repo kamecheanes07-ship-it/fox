@@ -1,3 +1,13 @@
+# Never let a foreign top-level `app/` folder (Python/FastAPI project) reach the
+# Next.js build: it would shadow src/app/ and make every route return 404.
+/app
+# Python side of the Space (entrypoint/app.py/requirements) is not part of the image.
+/pyapp
+*.py
+requirements*.txt
+pyproject.toml
+entrypoint.sh
+
 node_modules
 .next
 out
