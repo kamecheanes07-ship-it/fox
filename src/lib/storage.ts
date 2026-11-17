@@ -5,6 +5,7 @@ import { and, desc, eq, gt, inArray, isNull, sql } from "drizzle-orm";
 import { db, hasDatabase } from "@/db";
 import { ensureBootstrapped } from "@/db/bootstrap";
 import { collections, savedItems, searchHistory, users } from "@/db/schema";
+import { DATA_FILE } from "@/lib/data-dir";
 import { DEMO_EMAIL, DEMO_PASSWORD } from "@/lib/demo";
 import { hashPassword } from "@/lib/password";
 import type { CollectionDTO, HistoryDTO, SavePayload, SavedItemDTO, SearchTab } from "@/lib/types";
@@ -13,11 +14,12 @@ import { COLLECTION_COLORS, domainOf } from "@/lib/utils";
 /*
  * Unified persistence layer:
  *  - Uses PostgreSQL via Drizzle ORM when DATABASE_URL is configured and reachable.
- *  - Automatically falls back to a local JSON store (/tmp/fox-data.json) when
- *    running without an external database (e.g., Hugging Face Docker Spaces).
+ *  - Otherwise falls back to a local JSON store. The location is resolved by
+ *    `src/lib/data-dir.ts`, which prefers Hugging Face Spaces persistent storage
+ *    (`/data`), then `/app/data`, then `/tmp`.
  */
 
-const DATA_FILE = path.join(process.env.FOX_DATA_DIR || "/tmp", "fox-data.json");
+
 const HISTORY_DEDUPE_MS = 15 * 60 * 1000;
 
 interface LocalCollection {

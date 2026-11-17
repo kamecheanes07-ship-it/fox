@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { hasDatabase } from "@/db";
 import SettingsForms from "@/components/dashboard/SettingsForms";
+import { runtimeInfo } from "@/lib/runtime";
 
 export const metadata: Metadata = { title: "Settings" };
 export const dynamic = "force-dynamic";
 
 export default function SettingsPage() {
-  const storageMode = hasDatabase ? "PostgreSQL (DATABASE_URL)" : "Local JSON store (/tmp/fox-data.json)";
+  const storageMode = runtimeInfo().storageLabel;
 
   return (
     <div>

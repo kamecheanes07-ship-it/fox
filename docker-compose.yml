@@ -1,8 +1,14 @@
-# Self-hosted NexGO: app + PostgreSQL.
-# Usage: docker compose up -d --build
+# Fox Search — self-hosted stack.
+#
+# Default: the app alone, data in a named volume (no database needed).
+#   docker compose up -d --build
+#
+# With PostgreSQL instead of the JSON store:
+#   docker compose --profile postgres up -d --build
 services:
   db:
     image: postgres:16-alpine
+    profiles: ["postgres"]
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -20,14 +26,27 @@ services:
     build: .
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/app_db
-      PG_POOL_MAX: "10"
       NODE_ENV: production
+      PORT: "7860"
+      # Uncomment both lines (and start with --profile postgres) to use PostgreSQL.
+      # DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/app_db
+      # PG_POOL_MAX: "10"
+      # Only set this when the platform does not inject DATABASE_URL automatically:
+      # FOX_DATA_DIR: /data
     ports:
-      - "3000:3000"
+      - "7860:7860"
+    volumes:
+      # Survives `docker compose down` and image rebuilds.
+      - foxdata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:7860/api/health >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     depends_on:
-      db:
-        condition: service_healthy
+      - db
 
 volumes:
   pgdata:
+  foxdata:
