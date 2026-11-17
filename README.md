@@ -58,6 +58,18 @@ pinned: false
 
 ---
 
+## الشعار والأيقونات
+
+مصدر العلامة هو `assets-src/fox-mark.svg` (رأس ثعلب متجهّي)، ومنه تُولَّد كل الأيقونات:
+
+```bash
+node -e "const sharp=require('sharp'),fs=require('fs');const svg=fs.readFileSync('assets-src/fox-mark.svg');for(const [s,n] of [[192,'icon-192.png'],[512,'icon-512.png'],[180,'apple-touch-icon.png'],[32,'favicon-32x32.png'],[16,'favicon-16x16.png']]){sharp(svg,{density:s*4}).resize(s,s).png().toFile('public/icons/'+n)}"
+```
+
+- `public/favicon.ico` و`public/icons/*` هي ما يقدّمه المتصفح (`/favicon.ico` صار 200 بدل 404).
+- `public/manifest.webmanifest` يجعل التطبيق قابلاً للتثبيت على الجوال.
+- شعار الواجهة داخل التطبيق (`Logo.tsx`) صار SVG مضمّناً، فلا يعتمد على أي ملف صورة وقد بقي حاداً على كل المقاسات.
+
 ## التشغيل محلياً
 
 ```bash

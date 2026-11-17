@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
+import { FoxMark } from "@/components/Logo";
 import type { SearchTab } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -76,11 +77,7 @@ export default function SearchBar({
       )}
     >
       {!compact && (
-        <img
-          src="/logos/fox-icon.png"
-          alt=""
-          className="mr-3 h-6 w-6 shrink-0 object-contain select-none"
-        />
+        <FoxMark className="mr-3 h-6 w-6 select-none" />
       )}
       <input
         ref={inputRef}

@@ -11,6 +11,25 @@ export const metadata: Metadata = {
   },
   description:
     "Fox is a fast, private search engine with live results from DuckDuckGo — All, Images, News and Videos tabs, saved results, collections and search history.",
+  applicationName: "Fox Search",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icons/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+      { url: "/icons/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/icons/favicon-48x48.png", type: "image/png", sizes: "48x48" },
+      { url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icons/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    shortcut: ["/favicon.ico"],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Fox Search",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export const viewport: Viewport = {
