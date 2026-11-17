@@ -80,17 +80,20 @@ Next.js يختار مجلد App Router كأول مجلد موجود من: `app/`
 
 ## الشعار والأيقونات
 
-مصدر العلامة: `assets-src/fox-mark.svg` (رأس ثعلب — نفس تصميم الشعار الأصلي). الكود يقرأ الصور من `public/logos/`
-(`fox-dark.png` و`fox-light.png` و`fox-icon.png`) وهي مُولَّدة من الـ SVG نفسه ومُرفقة في المستودع، فلا تعود 404.
+الشعار مأخوذ من صور المستخدم الأصلية (`fox1.jpg` و`fox2.jpg` من مستودع `kamecheanes07-ship-it/Icons`).
+بما أن الأصل JPEG بخلفية شطرنجية مرسومة، استُخرج الشعار وفُصلت أجزاؤه البيضاء عن الخلفية، ثم أُعيد بناؤه
+بألوان مسطّحة وشفافية حقيقية:
 
-لتعديل الشعار: عدّل الـ SVG ثم أعد التوليد:
+| الملف | الاستخدام |
+|---|---|
+| `assets-src/fox-mark.png` | الثعلب فقط، شفاف (309×387) — المصدر |
+| `public/logos/fox-dark.png` | شعار كامل: ثعلب + كلمة FOX **بيضاء** (النمط الداكن) |
+| `public/logos/fox-light.png` | شعار كامل: ثعلب + كلمة FOX **سوداء** (النمط الفاتح) |
+| `public/logos/fox-icon.png` | الثعلب فقط، للاستخدام في حقل البحث |
+| `public/icons/*` + `public/favicon.ico` | أيقونة التطبيق: مربع برتقالي وفيه الثعلب بالأبيض (16→512 + ICO) |
 
-```bash
-node -e "const sharp=require('sharp'),fs=require('fs');const svg=fs.readFileSync('assets-src/fox-mark.svg');for(const n of ['fox-icon','fox-dark','fox-light']){sharp(svg,{density:720}).resize(512,512).png().toFile('public/logos/'+n+'.png')}"
-```
-
-الأيقونات (`public/favicon.ico` و`public/icons/*`) و`public/manifest.webmanifest` مُولَّدة من نفس المصدر أيضاً،
-لذا يظهر الشعار نفسه في التبويب وعلى شاشة الجوال.
+الواجهة تبدّل تلقائياً بين `fox-dark.png` و`fox-light.png` حسب النمط (`dark:block` / `dark:hidden`) في
+`src/components/Logo.tsx`، و`<head>` يستخدم `favicon.ico` و`manifest.webmanifest`.
 
 ## التشغيل محلياً
 

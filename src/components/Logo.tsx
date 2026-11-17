@@ -5,37 +5,21 @@ import { cn } from "@/lib/utils";
 /**
  * Fox brand lockup (icon + wordmark).
  *
- * The mark artwork lives in `assets-src/fox-mark.svg` and is exported to
- * `public/logos/fox-icon.png`, `fox-dark.png` and `fox-light.png`, which is what
- * this component renders (dark and light variants, swapped by the theme).
- * `FoxMark` renders the same artwork inline, for places that must not issue an
- * extra image request (e.g. the search field).
+ * Artwork comes from the user's original logo files. Because the source images
+ * were JPEGs with a painted checkerboard instead of real transparency, the mark
+ * was extracted once into `assets-src/fox-mark.png` and exported to:
+ *   public/logos/fox-dark.png   -> icon + white "FOX"  (dark theme)
+ *   public/logos/fox-light.png  -> icon + black "FOX"  (light theme)
+ *   public/logos/fox-icon.png   -> icon only (search field)
+ * `FoxMark` renders the icon-only artwork for compact spots (search field).
  */
 export function FoxMark({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 64 64"
-      role="img"
-      aria-label="Fox"
-      className={cn("h-full w-auto shrink-0", className)}
-    >
-      <defs>
-        <linearGradient id="fox-mark-bg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#fbb36c" />
-          <stop offset="1" stopColor="#eb6014" />
-        </linearGradient>
-      </defs>
-      <rect width="64" height="64" rx="14" fill="url(#fox-mark-bg)" />
-      <path d="M11.4 11.4 27.6 20.4 12 31Z" fill="#fff7ed" />
-      <path d="M52.6 11.4 36.4 20.4 52 31Z" fill="#fff7ed" />
-      <path d="M15 16.6 22.6 20.6 15.4 25.4Z" fill="#f4741f" />
-      <path d="M49 16.6 41.4 20.6 48.6 25.4Z" fill="#f4741f" />
-      <ellipse cx="32" cy="36.6" rx="22.4" ry="22.2" fill="#fff7ed" />
-      <ellipse cx="32" cy="45.4" rx="14.6" ry="10.6" fill="#fdf1e0" />
-      <ellipse cx="23.4" cy="34.6" rx="2.8" ry="3.6" fill="#141414" />
-      <ellipse cx="40.6" cy="34.6" rx="2.8" ry="3.6" fill="#141414" />
-      <circle cx="32" cy="45.8" r="3" fill="#141414" />
-    </svg>
+    <img
+      src="/logos/fox-icon.png"
+      alt="Fox"
+      className={cn("w-auto object-contain select-none", className)}
+    />
   );
 }
 
