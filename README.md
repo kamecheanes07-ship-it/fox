@@ -80,15 +80,17 @@ Next.js يختار مجلد App Router كأول مجلد موجود من: `app/`
 
 ## الشعار والأيقونات
 
-مصدر العلامة هو `assets-src/fox-mark.svg` (رأس ثعلب متجهّي)، ومنه تُولَّد كل الأيقونات:
+مصدر العلامة: `assets-src/fox-mark.svg` (رأس ثعلب — نفس تصميم الشعار الأصلي). الكود يقرأ الصور من `public/logos/`
+(`fox-dark.png` و`fox-light.png` و`fox-icon.png`) وهي مُولَّدة من الـ SVG نفسه ومُرفقة في المستودع، فلا تعود 404.
+
+لتعديل الشعار: عدّل الـ SVG ثم أعد التوليد:
 
 ```bash
-node -e "const sharp=require('sharp'),fs=require('fs');const svg=fs.readFileSync('assets-src/fox-mark.svg');for(const [s,n] of [[192,'icon-192.png'],[512,'icon-512.png'],[180,'apple-touch-icon.png'],[32,'favicon-32x32.png'],[16,'favicon-16x16.png']]){sharp(svg,{density:s*4}).resize(s,s).png().toFile('public/icons/'+n)}"
+node -e "const sharp=require('sharp'),fs=require('fs');const svg=fs.readFileSync('assets-src/fox-mark.svg');for(const n of ['fox-icon','fox-dark','fox-light']){sharp(svg,{density:720}).resize(512,512).png().toFile('public/logos/'+n+'.png')}"
 ```
 
-- `public/favicon.ico` و`public/icons/*` هي ما يقدّمه المتصفح (`/favicon.ico` صار 200 بدل 404).
-- `public/manifest.webmanifest` يجعل التطبيق قابلاً للتثبيت على الجوال.
-- شعار الواجهة داخل التطبيق (`Logo.tsx`) صار SVG مضمّناً، فلا يعتمد على أي ملف صورة وقد بقي حاداً على كل المقاسات.
+الأيقونات (`public/favicon.ico` و`public/icons/*`) و`public/manifest.webmanifest` مُولَّدة من نفس المصدر أيضاً،
+لذا يظهر الشعار نفسه في التبويب وعلى شاشة الجوال.
 
 ## التشغيل محلياً
 
